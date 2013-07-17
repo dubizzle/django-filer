@@ -5,6 +5,10 @@ from filer.utils.loader import load_object
 from filer.utils.recursive_dictionary import RecursiveDictionaryWithExcludes
 import os
 
+if "django.contrib.staticfiles" in settings.INSTALLED_APPS:
+    from django.contrib.staticfiles.templatetags.staticfiles import static
+else:
+    static = lambda path: (getattr(settings, 'STATIC_URL', None) or settings.MEDIA_URL) + path
 
 FILER_DEBUG = getattr(settings, 'FILER_DEBUG', False) # When True makes
 FILER_SUBJECT_LOCATION_IMAGE_DEBUG = getattr(settings, 'FILER_SUBJECT_LOCATION_IMAGE_DEBUG', False)
@@ -23,8 +27,9 @@ FILER_IS_PUBLIC_DEFAULT = getattr(settings, 'FILER_IS_PUBLIC_DEFAULT', True)
 
 FILER_PAGINATE_BY = getattr(settings, 'FILER_PAGINATE_BY', 20)
 FILER_STATICMEDIA_PREFIX = getattr(settings, 'FILER_STATICMEDIA_PREFIX', None)
+
 if not FILER_STATICMEDIA_PREFIX:
-    FILER_STATICMEDIA_PREFIX = (getattr(settings, 'STATIC_URL', None) or settings.MEDIA_URL) + 'filer/'
+    FILER_STATICMEDIA_PREFIX = static("filer/")
 
 FILER_ADMIN_ICON_SIZES = getattr(settings,"FILER_ADMIN_ICON_SIZES",(
     '16', '32', '48', '64',
